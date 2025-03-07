@@ -1,150 +1,78 @@
 import fs from "fs";
 import path from "path";
-import readline from "readline/promises";
-import { fileURLToPath } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
 import { spawn } from "child_process";
+import {
+  generateModelFile,
+  generateControllerFile,
+  generateRouteFile,
+  generateValidationFile,
+  updateIndexRoutes,
+} from "../utils/moduleGenerator.js";
 import { formatRouteName } from "./helpers.js";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// Move up from "scripts" to root, then into "src/modules"
-const rootPath = path.join(__dirname, "..", ".."); // Moves out of "scripts" to project root
+const rootPath = path.join(__dirname, "..", "..");
+
+// Paths
 const modulesPath = path.join(rootPath, "src", "modules");
-const indexRoutesPath = path.join(modulesPath, "index.routes.js");
+const modelsPath = path.join(rootPath, "src", "database", "models");
 
-// Setup readline interface
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+// ✅ Resolve absolute path to `modelsConfig.js`
+const modelsConfigPath = pathToFileURL(
+  path.join(rootPath, "src/config/modelsConfig.js")
+).href;
 
-(async () => {
-  try {
-    let name = (await rl.question("Enter module name: ")).trim();
-    const routeName = formatRouteName(name);
-    if (!name) {
-      console.log("❌ module name is required!");
-      rl.close();
-      return;
-    }
-    const folderPath = path.join(modulesPath, routeName);
-    const controllerPath = path.join(folderPath, `${routeName}.controller.js`);
-    const routePath = path.join(folderPath, `${routeName}.routes.js`);
-    const validationPath = path.join(folderPath, `${routeName}.validation.js`);
+// Ensure directories exist
+if (!fs.existsSync(modelsPath)) fs.mkdirSync(modelsPath, { recursive: true });
+if (!fs.existsSync(modulesPath)) fs.mkdirSync(modulesPath, { recursive: true });
 
-    // Create module folder
-    if (fs.existsSync(folderPath)) {
-      console.log(`❌ ${name} folder already exists!`);
-      rl.close();
-      return;
+// ✅ Import dynamically and use the exported `modelsConfig`
+import(modelsConfigPath)
+  .then((module) => {
+    const { modelsConfig } = module;
+
+    if (!modelsConfig || !Array.isArray(modelsConfig)) {
+      throw new Error("modelsConfig is not an array or is undefined!");
     }
 
-    fs.mkdirSync(folderPath, { recursive: true });
+    modelsConfig.forEach((config) => {
+      const { name } = config;
+      const routeName = formatRouteName(name);
+      const modulePath = path.join(modulesPath, routeName);
+      const modelPath = path.join(modelsPath, `${routeName}.model.js`);
+      const controllerPath = path.join(modulePath, `${routeName}.controller.js`);
+      const routePath = path.join(modulePath, `${routeName}.routes.js`);
+      const validationPath = path.join(modulePath, `${routeName}.validation.js`);
 
-    fs.writeFileSync(
-      controllerPath,
-      `
-// (controller) get all ${routeName}s
-export const getAll = (req, res) => res.json({ message: "Get all ${routeName}s" });
-// (controller) get one ${routeName}
-export const getOne = (req, res) => res.json({ message: "Get one ${routeName}" });
-// (controller) create one ${routeName}
-export const create = (req, res) => res.json({ message: "Create ${routeName}" });
-// (controller) update one ${routeName}
-export const update = (req, res) => res.json({ message: "Update ${routeName}" });
-// (controller) delete one ${routeName}
-export const deleteItem = (req, res) => res.json({ message: "Delete ${routeName}" });\n`
-    );
+      if (!fs.existsSync(modulePath))
+        fs.mkdirSync(modulePath, { recursive: true });
 
-    // Create routes file
+      // ✅ generate Model
+      generateModelFile(modelPath, config);
+      // ✅ generate Controller
+      generateControllerFile(controllerPath, config);
+      // ✅ generate Route
+      generateRouteFile(routePath, routeName);
+      // ✅ generate Validation
+      generateValidationFile(validationPath);
+      // ✅ Update index.routes.js
+      updateIndexRoutes(modulesPath, routeName, name);
 
-    fs.writeFileSync(
-      routePath,
-      `import express from "express";
-import * as controller from "./${routeName}.controller.js";
-import {
-  createValidation,
-  deleteValidation,
-  getOneValidation,
-  updateValidation,
-} from "./${routeName}.validation.js";
-import { validation } from "../../middleware/globels/validation.js";
+      console.log(`✅ Module "${routeName}" created successfully!`);
+    });
 
-const router = express.Router();
-// (route) get all ${routeName}s
-router.get("/", controller.getAll);
-// (route) get one ${routeName}
-router.get("/:id", validation(getOneValidation), controller.getOne);
-// (route) create one ${routeName}
-router.post("/", validation(createValidation), controller.create);
-// (route) update one ${routeName}
-router.put("/:id", validation(updateValidation), controller.update);
-// (route) delete one ${routeName}
-router.delete("/:id", validation(deleteValidation), controller.deleteItem);
-
-export default router;
-        \n`
-    );
-    // validation routes file
-    fs.writeFileSync(
-      validationPath,
-      `import Joi from "joi";
-// (Validation) create ${routeName}
-export const createValidation = Joi.object({});
-// (Validation) update ${routeName}
-export const updateValidation = Joi.object({});
-// (Validation) deleta ${routeName}
-export const deleteValidation = Joi.object({});
-// (Validation) get One ${routeName}
-export const getOneValidation = Joi.object({});\n`
-    );
-
-    // Update index.routes.js
-    let indexRoutesContent = fs.existsSync(indexRoutesPath)
-      ? fs.readFileSync(indexRoutesPath, "utf8")
-      : `export const bootstrap = (app, express) => {
-  const routeverion = "/api";
-  app.get(routeverion, (req, res) => res.send("Welcome!"));
-};\n`;
-
-    const importStatement = `import ${routeName}Router from "./${routeName}/${routeName}.routes.js";\n`;
-    const useStatement = `  app.use(\`\${routeverion}/${name}s\`, ${routeName}Router);\n`;
-
-    if (!indexRoutesContent.includes(importStatement)) {
-      indexRoutesContent = importStatement + indexRoutesContent;
-    }
-
-    if (!indexRoutesContent.includes(useStatement)) {
-      const insertionPoint = "// End  Endpoints";
-      if (indexRoutesContent.includes(insertionPoint)) {
-        indexRoutesContent = indexRoutesContent.replace(
-          `  ${insertionPoint}`,
-          `${useStatement}  ${insertionPoint}`
-        );
-      } else {
-        // Fallback: Append at the end if the marker is missing
-        indexRoutesContent = indexRoutesContent.replace(
-          "databaseConnection(); // database connection",
-          `${useStatement}\n  databaseConnection(); // database connection`
-        );
-      }
-    }
-    fs.writeFileSync(indexRoutesPath, indexRoutesContent);
-    console.log(
-      `✅ module "${routeName}" created successfully in src/modules/${routeName}!`
-    );
     console.log("🚀 Restarting server with npm run dev...");
+
     const serverProcess = spawn("npm", ["run", "dev"], {
-      stdio: "inherit", // Show logs in terminal
-      shell: true, // Ensures cross-platform compatibility
-      cwd: rootPath, // Ensure it's running in the project root
+      stdio: "inherit",
+      shell: true,
+      cwd: rootPath,
     });
 
     serverProcess.on("exit", (code) => {
       console.log(`🔄 Server process exited with code ${code}`);
     });
-  } catch (error) {
-    console.error("❌ Error:", error);
-  } finally {
-    rl.close();
-  }
-})();
+  })
+  .catch((error) => console.error("❌ Error importing modelsConfig:", error));
