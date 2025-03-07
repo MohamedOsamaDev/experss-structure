@@ -39,12 +39,12 @@ import(modelsConfigPath)
 
     modelsConfig.forEach((config) => {
       const { name } = config;
-      const routeName = formatRouteName(name);
-      const modulePath = path.join(modulesPath, routeName);
-      const modelPath = path.join(modelsPath, `${routeName}.model.js`);
-      const controllerPath = path.join(modulePath, `${routeName}.controller.js`);
-      const routePath = path.join(modulePath, `${routeName}.routes.js`);
-      const validationPath = path.join(modulePath, `${routeName}.validation.js`);
+      // const routeName = formatRouteName(name);
+      const modulePath = path.join(modulesPath, name);
+      const modelPath = path.join(modelsPath, `${name}.model.js`);
+      const controllerPath = path.join(modulePath, `${name}.controller.js`);
+      const routePath = path.join(modulePath, `${name}.routes.js`);
+      const validationPath = path.join(modulePath, `${name}.validation.js`);
 
       if (!fs.existsSync(modulePath))
         fs.mkdirSync(modulePath, { recursive: true });
@@ -54,13 +54,13 @@ import(modelsConfigPath)
       // ✅ generate Controller
       generateControllerFile(controllerPath, config);
       // ✅ generate Route
-      generateRouteFile(routePath, routeName);
+      generateRouteFile(routePath, name);
       // ✅ generate Validation
       generateValidationFile(validationPath);
       // ✅ Update index.routes.js
-      updateIndexRoutes(modulesPath, routeName, name);
+      updateIndexRoutes(modulesPath, name, name);
 
-      console.log(`✅ Module "${routeName}" created successfully!`);
+      console.log(`✅ Module "${name}" created successfully!`);
     });
 
     console.log("🚀 Restarting server with npm run dev...");

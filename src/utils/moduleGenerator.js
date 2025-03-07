@@ -30,10 +30,10 @@ export const generateControllerFile = (
 ) => {
   const content = useCrudHandler
     ? `import { deleteOne, FindAll, FindOne, InsertOne, updateOne } from "../handlers/crudHandler.js";
-import ${modelName} from "../../database/models/${name}.model.js";
+import { ${modelName}Model } from "../../database/models/${name}.model.js";
 
 const config = {
-  model: ${modelName},
+  model: ${modelName}Model,
   name: "${name}",
   slug: "${slug}",
   pushToPipeline: ${pushToPipeline || "null"},
@@ -47,7 +47,7 @@ export const getOne = FindOne(config);
 export const getAll = FindAll(config);
 export const deleteItem = deleteOne(config);
 `
-    : `import ${modelName} from "../../database/models/${name}.model.js";
+    : `import { ${modelName}Model } from "../../database/models/${name}.model.js";
 import { AsyncHandler } from "../middleware/globels/AsyncHandler.js";
 
 export const getAll = AsyncHandler(async (req, res, next) => { message: "Get all ${name}s" });
@@ -63,21 +63,21 @@ export const deleteItem = AsyncHandler(async (req, res, next) => { message: "Del
 /**
  * Generates the route file.
  */
-export const generateRouteFile = (routePath, name) => {
+export const generateRouteFile = (routePath, routeName) => {
   const content = `import express from "express";
-import * as controller from "./${name}.controller.js";
-import { createValidation, deleteValidation, getOneValidation, updateValidation } from "./${name}.validation.js";
+import * as controller from "./${routeName}.controller.js";
+import { createValidation, deleteValidation, getOneValidation, updateValidation } from "./${routeName}.validation.js";
 import { validation } from "../../middleware/globels/validation.js";
 
-const router = express.Router();
+const ${routeName}Router = express.Router();
 
-router.get("/", controller.getAll);
-router.get("/:id", validation(getOneValidation), controller.getOne);
-router.post("/", validation(createValidation), controller.create);
-router.put("/:id", validation(updateValidation), controller.update);
-router.delete("/:id", validation(deleteValidation), controller.deleteItem);
+${routeName}Router.get("/", controller.getAll);
+${routeName}Router.get("/:id", validation(getOneValidation), controller.getOne);
+${routeName}Router.post("/", validation(createValidation), controller.create);
+${routeName}Router.put("/:id", validation(updateValidation), controller.update);
+${routeName}Router.delete("/:id", validation(deleteValidation), controller.deleteItem);
 
-export default router;
+export default ${routeName}Router;
 `;
 
   fs.writeFileSync(routePath, content);

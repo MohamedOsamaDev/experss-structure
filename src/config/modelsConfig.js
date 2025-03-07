@@ -8,7 +8,7 @@ export const modelsConfig = [
         description: "String",
         poster: "String",
       },
-      pushToPipeline: "Posterlookup",
+      pushToPipeline: {},
       options: {
         searchFields: ["slug", "name", "description"],
       },
@@ -24,7 +24,7 @@ export const modelsConfig = [
         price: "Number",
         category: "mongoose.Schema.Types.ObjectId",
       },
-      pushToPipeline: "CategoryLookup",
+      pushToPipeline: {},
       options: {
         searchFields: ["slug", "name", "description"],
       },
