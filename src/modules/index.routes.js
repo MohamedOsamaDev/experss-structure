@@ -1,4 +1,3 @@
-import testRouter from "./test/test.routes.js";
 import { UserRouter } from "./user/user.routes.js";
 import { AuthRouter } from "./auth/auth.routes.js";
 import { globalError } from "../middleware/globels/globalError.js";
@@ -23,7 +22,6 @@ export const bootstrap = (app, express) => {
   app.use(`${routeverion}/users`, UserRouter);
   app.use(`${routeverion}/pages`, pageRouter);
   app.use(`${routeverion}/files`, fileRouter);
-  app.use(`${routeverion}/tests`, testRouter);
   // End  Endpoints
   scheduleTasksHandler(scheduleTasks); // cron jobs
   databaseConnection(); // database connection

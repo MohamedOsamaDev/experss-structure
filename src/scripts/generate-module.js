@@ -33,7 +33,7 @@ const rl = readline.createInterface({
 
     // Create module folder
     if (fs.existsSync(folderPath)) {
-      console.log("❌ Module folder already exists!");
+      console.log(`❌ ${name} folder already exists!`);
       rl.close();
       return;
     }
