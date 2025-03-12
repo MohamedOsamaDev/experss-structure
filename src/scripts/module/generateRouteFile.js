@@ -8,7 +8,7 @@ import path from "path";
 export const generateRouteFile = (routePath, routeName) => {
   const content = `import express from "express";
 import * as controller from "./${routeName}.controller.js";
-import { createValidation, deleteValidation, getOneValidation, updateValidation } from "./${routeName}.validation.js";
+import { create${routeName}Validation, delete${routeName}Validation, getOne${routeName}Validation, update${routeName}Validation } from "./${routeName}.validation.js";
 import { validation } from "../../middleware/globels/validation.js";
 
 const ${routeName}Router = express.Router();
