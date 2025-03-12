@@ -2,14 +2,13 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath, pathToFileURL } from "url";
 import { spawn } from "child_process";
-import {
-  generateModelFile,
-  generateControllerFile,
-  generateRouteFile,
-  generateValidationFile,
-  updateIndexRoutes,
-} from "../utils/moduleGenerator.js";
+
 import { formatRouteName } from "./helpers.js";
+import { generateControllerFile } from "./module/generateControllerFile.js";
+import { generateModelFile } from "./module/generateModelFile.js";
+import { generateRouteFile } from "./module/generateRouteFile.js";
+import { generateValidationFile } from "./module/generateValidationFile.js";
+import { updateIndexRoutes } from "./module/updateIndexRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
