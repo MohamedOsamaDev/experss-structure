@@ -10,10 +10,10 @@ import pluralize from "pluralize";
 export const generateModelFile = (modelPath, name, schema) => {
   try {
     const { fields } = schema;
-    
+
     let imports = new Set([
       `import { Schema, model, models } from "mongoose";`,
-      `import { mongtext, schemaCommens, poster, mongeDescription } from "../Commons";`
+      `import { mongtext, schemaCommens, poster, mongeDescription } from "../Commons.js";`,
     ]);
 
     // Function to parse each field into a Mongoose schema definition
@@ -44,7 +44,7 @@ const ${name}Schema = new Schema({
   timestamps: true
 });
 
-export const ${name} = models.${name} || model("${name}", ${name}Schema);
+export const ${name}Model = models.${name} || model("${name}", ${name}Schema);
 `;
 
     // Generate the model file
