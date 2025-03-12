@@ -9,7 +9,7 @@ import pluralize from "pluralize";
  */
 export const generateModelFile = (modelPath, schema) => {
   try {
-    const { fields, options } = schema;
+    const { fields } = schema;
     const schemaName = pluralize.singular(modelPath.split("/").pop().replace(".js", ""));
     const modelName = schemaName.charAt(0).toUpperCase() + schemaName.slice(1);
 

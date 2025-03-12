@@ -49,13 +49,13 @@ import(modelsConfigPath)
         fs.mkdirSync(modulePath, { recursive: true });
 
       // ✅ generate Model
-      generateModelFile(modelPath, config);
+      generateModelFile(modelPath, config?.schema);
       // ✅ generate Controller
       generateControllerFile(controllerPath, config);
       // ✅ generate Route
       generateRouteFile(routePath, name);
       // ✅ generate Validation
-      generateValidationFile(validationPath, name, config.schema);
+      generateValidationFile(validationPath, name, config?.schema);
       // ✅ Update index.routes.js
       updateIndexRoutes(modulesPath, name, name);
 
