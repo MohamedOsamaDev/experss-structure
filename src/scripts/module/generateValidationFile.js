@@ -10,38 +10,29 @@ import pluralize from "pluralize";
  */
 export const generateValidationFile = (validationPath, schemaName, schema) => {
   try {
-    let imports = `import Joi from "joi";
-import { CommonsVal, fileVal } from "../../modules/_commons/validation.js";
-import { joiArray, joiText } from "../../utils/JoiHandlers.js";\n`;
+    let imports = new Set([
+      `import Joi from "joi";`,
+      `import { CommonsVal, fileVal } from "../../modules/_commons/validation.js";`,
+      `import { joiArray, joiText } from "../../utils/JoiHandlers.js";`,
+    ]);
 
     // Function to parse each field into a Joi validation schema
     const parseField = (field, required = false) => {
-      const {
-        name,
-        type = "text",
-        min = 2,
-        max = 2000,
-        single,
-        ref,
-        fields,
-      } = field;
-      const isRequired = required ? `true` : `false`;
+      const { name, type = "text", min = 2, max = 2000, single, ref, fields } = field;
+      const isRequired = required ? `.required()` : "";
 
-      const text = () =>
-        `joiText({ min: ${min}, max: ${max}, required: ${isRequired} })`;
+      const text = () => `joiText({ min: ${min}, max: ${max}, required: ${required} })`;
 
       const media = () => {
-        const fileValSchema = `fileVal.${
-          required ? "required()" : "optional()"
-        }`;
+        const fileValSchema = `fileVal${isRequired}`;
         return single
           ? `${fileValSchema}`
-          : `joiArray({ body: ${fileValSchema}, min: ${min}, max: ${max}, required: ${isRequired} })`;
+          : `Joi.array().items(${fileValSchema}).min(${min}).max(${max})${isRequired}`;
       };
 
-      const boolean = () => `Joi.boolean()${required ? ".required()" : ""}`;
+      const boolean = () => `Joi.boolean()${isRequired}`;
 
-      const date = () => `joiText({ date: true, required: ${isRequired} })`;
+      const date = () => `joiText({ date: true, required: ${required} })`;
 
       const object = () => {
         if (!fields) return "Joi.object().optional()";
@@ -53,28 +44,18 @@ import { joiArray, joiText } from "../../utils/JoiHandlers.js";\n`;
       const relation = () => {
         if (!ref) return null;
         const refKey = pluralize.singular(ref);
-        const relationSchema = `${refKey}ValidationUpdate`;
-        imports += `import { ${relationSchema} } from "../modules/${refKey}/${refKey}.validation.js";\n`;
+        const relationSchema = `${refKey}Validation`;
+
+        // Prevent duplicate imports
+        const importStatement = `import { ${relationSchema} } from "../../modules/${refKey}/${refKey}.validation.js";`;
+        imports.add(importStatement);
 
         return single
-          ? `${relationSchema}(locale, false)${required ? ".required()" : ""}`
-          : `joiArray({ body: ${relationSchema}(locale, true), locale, ${[
-              min && `min: ${min}`,
-              required && `required: ${isRequired}`,
-            ]
-              .filter(Boolean)
-              .join(", ")} })`;
+          ? `${relationSchema}().min(1)${isRequired}`
+          : `Joi.array().items(${relationSchema}().min(1))${isRequired}`;
       };
 
-      const allTypes = {
-        text,
-        textarea: text,
-        date,
-        boolean,
-        media,
-        object,
-        relation,
-      };
+      const allTypes = { text, textarea: text, date, boolean, media, object, relation };
       return allTypes[type] ? allTypes[type]() : null;
     };
 
@@ -91,20 +72,21 @@ import { joiArray, joiText } from "../../utils/JoiHandlers.js";\n`;
 
     const idValidation = `Joi.object({ id: Joi.string().required() })`;
 
-    const result = `${imports}
-export const ${schemaName}ValidationCreate = () => Joi.object({
+    const result = `${Array.from(imports).join("\n")}
+
+export const create${schemaName}Validation = () => Joi.object({
   ${createBody}
   ...CommonsVal,
 });
 
-export const ${schemaName}ValidationUpdate = () => Joi.object({
+export const update${schemaName}Validation = () => Joi.object({
   ${updateBody}
   ...CommonsVal,
 });
 
-export const ${schemaName}ValidationDelete = ${idValidation};
+export const delete${schemaName}Validation = ${idValidation};
 
-export const ${schemaName}ValidationGetOne = ${idValidation};
+export const getOne${schemaName}Validation = ${idValidation};
 `;
 
     // Generate validation file content
