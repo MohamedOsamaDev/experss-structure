@@ -61,8 +61,8 @@ export const generateValidationFile = (validationPath, schemaName, schema) => {
         imports.add(importStatement);
 
         return single
-          ? `${relationSchema}().min(1)${isRequired}`
-          : `Joi.array().items(${relationSchema}().min(1))${isRequired}`;
+          ? `${relationSchema}().min(1)${isRequired},`
+          : `Joi.array().items(${relationSchema}().min(1))${isRequired},`;
       };
 
       const allTypes = {
