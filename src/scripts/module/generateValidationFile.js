@@ -12,7 +12,7 @@ export const generateValidationFile = (validationPath, schemaName, schema) => {
   try {
     let imports = `import Joi from "joi";
 import { CommonsVal, fileVal } from "../../modules/_commons/validation.js";
-import { joiArray, joiText, joiObject } from "../../utils/JoiHandlers.js";\n`;
+import { joiArray, joiText } from "../../utils/JoiHandlers.js";\n`;
 
     // Function to parse each field into a Joi validation schema
     const parseField = (field, required = false) => {
@@ -45,20 +45,16 @@ import { joiArray, joiText, joiObject } from "../../utils/JoiHandlers.js";\n`;
 
       const object = () => {
         if (!fields) return "Joi.object().optional()";
-        return `joiObject({
-          body: { 
-            ${fields.map((f) => `${f.name}: ${parseField(f)}`).join(",\n")}
-          },
-          locale,
-          ${isRequired ? "isRequired: true" : ""}
-        })`;
+        return `Joi.object({
+          ${fields.map((f) => `${f.name}: ${parseField(f, true)}`).join(",\n")}
+        })${required ? ".required()" : ".optional()"}`;
       };
 
       const relation = () => {
         if (!ref) return null;
         const refKey = pluralize.singular(ref);
-        const relationSchema = `${refKey}Validation`;
-        imports += `import { ${relationSchema} } from "../modules/${refKey}/${refKey}.validation";\n`;
+        const relationSchema = `${refKey}ValidationUpdate`;
+        imports += `import { ${relationSchema} } from "../modules/${refKey}/${refKey}.validation.js";\n`;
 
         return single
           ? `${relationSchema}(locale, false)${required ? ".required()" : ""}`
@@ -96,19 +92,19 @@ import { joiArray, joiText, joiObject } from "../../utils/JoiHandlers.js";\n`;
     const idValidation = `Joi.object({ id: Joi.string().required() })`;
 
     const result = `${imports}
-export const create${schemaName}Validation = (locale = "en") => Joi.object({
+export const ${schemaName}ValidationCreate = () => Joi.object({
   ${createBody}
   ...CommonsVal,
 });
 
-export const update${schemaName}Validation = (locale = "en") => Joi.object({
+export const ${schemaName}ValidationUpdate = () => Joi.object({
   ${updateBody}
   ...CommonsVal,
 });
 
-export const delete${schemaName}Validation = ${idValidation};
+export const ${schemaName}ValidationDelete = ${idValidation};
 
-export const getOne${schemaName}Validation = ${idValidation};
+export const ${schemaName}ValidationGetOne = ${idValidation};
 `;
 
     // Generate validation file content
