@@ -15,8 +15,8 @@ import { CommonsVal, fileVal } from "../../modules/_commons/validation.js";
 import { joiArray, joiText } from "../../utils/JoiHandlers.js";\n`;
 
     // Function to parse each field into a Joi validation schema
-    const parseField = (field) => {
-      const { name, type, required = false, min, max, single } = field;
+    const parseField = (field, required = false) => {
+      const { name, type, min, max, single } = field;
       const minValue = min || undefined;
       const isRequired = required ? `true` : `false`;
 
@@ -50,17 +50,33 @@ import { joiArray, joiText } from "../../utils/JoiHandlers.js";\n`;
       return allTypes[type] ? allTypes[type]() : null;
     };
 
-    // Construct validation schema
-    const bodyContent = schema.fields
-      .map((field) => `${field.name}: ${parseField(field)},`)
+    // Create different validation schemas
+    const createBody = schema.fields
+      .map((field) => `${field.name}: ${parseField(field, true)},`)
       .filter(Boolean)
       .join("\n  ");
 
+    const updateBody = schema.fields
+      .map((field) => `${field.name}: ${parseField(field, false)},`)
+      .filter(Boolean)
+      .join("\n  ");
+
+    const idValidation = `Joi.object({ id: Joi.string().required() })`;
+
     const result = `${imports}
-export const ${schemaName}Validation = (locale = "en") => Joi.object({
-  ${bodyContent}
+export const create${schemaName}Validation = () => Joi.object({
+  ${createBody}
   ...CommonsVal,
 });
+
+export const update${schemaName}Validation = () => Joi.object({
+  ${updateBody}
+  ...CommonsVal,
+});
+
+export const delete${schemaName}Validation = ${idValidation};
+
+export const getOne${schemaName}Validation = ${idValidation};
 `;
 
     // Generate validation file content
