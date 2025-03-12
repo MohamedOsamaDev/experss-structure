@@ -7,12 +7,10 @@ import pluralize from "pluralize";
  * @param {string} modelPath - Path to save the model file.
  * @param {Object} schema - Schema definition containing fields and options.
  */
-export const generateModelFile = (modelPath, schema) => {
+export const generateModelFile = (modelPath, name, schema) => {
   try {
     const { fields } = schema;
-    const schemaName = pluralize.singular(modelPath.split("/").pop().replace(".js", ""));
-    const modelName = schemaName.charAt(0).toUpperCase() + schemaName.slice(1);
-
+    
     let imports = new Set([
       `import { Schema, model, models } from "mongoose";`,
       `import { mongtext, schemaCommens, poster, mongeDescription } from "../Commons";`
@@ -38,7 +36,7 @@ export const generateModelFile = (modelPath, schema) => {
     // Construct final model file content
     const content = `${Array.from(imports).join("\n")}
 
-const ${modelName}Schema = new Schema({
+const ${name}Schema = new Schema({
   slug: mongtext,
   ${schemaDefinition},
   ...schemaCommens
@@ -46,12 +44,12 @@ const ${modelName}Schema = new Schema({
   timestamps: true
 });
 
-export const ${modelName} = models.${modelName} || model("${modelName}", ${modelName}Schema);
+export const ${name} = models.${name} || model("${name}", ${name}Schema);
 `;
 
     // Generate the model file
     fs.writeFileSync(modelPath, content);
-    console.log(`✅ Model file ${modelName}.js created successfully!`);
+    console.log(`✅ Model file ${name}.js created successfully!`);
   } catch (error) {
     console.error(`❌ Error while creating ${modelPath}:`, error);
   }

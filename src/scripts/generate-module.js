@@ -49,7 +49,7 @@ import(modelsConfigPath)
         fs.mkdirSync(modulePath, { recursive: true });
 
       // ✅ generate Model
-      generateModelFile(modelPath, config?.schema);
+      generateModelFile(modelPath, name, config?.schema);
       // ✅ generate Controller
       generateControllerFile(controllerPath, config);
       // ✅ generate Route
