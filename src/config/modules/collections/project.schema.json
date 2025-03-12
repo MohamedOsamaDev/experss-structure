@@ -1,0 +1,121 @@
+{
+    "fields": [
+        {
+            "name": "title",
+            "type": "text",
+            "min": 3,
+            "max": 20000,
+            "label": "title"
+        },
+        {
+            "name": "description",
+            "type": "textarea",
+            "min": 3,
+            "max": 20000,
+            "label": "description"
+        },
+        {
+            "name": "publish",
+            "type": "boolean",
+            "readOnly": false,
+            "label": "publish",
+            "default": false,
+            "required": true
+        },
+        {
+            "name": "shadowColor",
+            "type": "text",
+            "min": 3,
+            "max": 20000,
+            "label": "shadowColor"
+        },
+        {
+            "name": "position",
+            "type": "text",
+            "min": 3,
+            "max": 20000,
+            "label": "position"
+        },
+        {
+            "name": "link",
+            "type": "text",
+            "min": 3,
+            "max": 20000,
+            "label": "link",
+            "required": true
+        },
+        {
+            "name": "state",
+            "type": "enum",
+            "options": [
+                {
+                    "value": "in progress",
+                    "label": "in progress"
+                },
+                {
+                    "value": "live",
+                    "label": "live"
+                }
+            ],
+            "label": "state",
+            "required": true
+        },
+        {
+            "name": "poster",
+            "type": "media",
+            "allowedTypes": [
+                "image"
+            ],
+            "single": true,
+            "label": "poster",
+            "required": true
+        },
+        {
+            "name": "logo",
+            "type": "media",
+            "allowedTypes": [
+                "image"
+            ],
+            "single": true,
+            "label": "logo",
+            "required": true
+        },
+        {
+            "name": "images",
+            "type": "media",
+            "allowedTypes": [
+                "image"
+            ],
+            "single": false,
+            "label": "images",
+            "required": true,
+            "min": 3,
+            "max": 10
+        }
+    ],
+    "options": {
+        "roles": {
+            "view": true,
+            "create": true,
+            "update": true,
+            "delete": true,
+            "filter": true,
+            "sort": true,
+            "search": true,
+            "table": true
+        },
+        "cache": {
+            "duration": "5m",
+            "tags": [
+                "landing"
+            ]
+        }
+    },
+    "view": [
+        "poster",
+        "title",
+        "description",
+        "createdAt",
+        "updatedAt"
+    ]
+}

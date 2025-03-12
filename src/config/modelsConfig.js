@@ -1,8 +1,11 @@
+import project_schema from "./collections/project.schema.json" with { type: "json" };
+import post_schema from "./collections/post.schema.json" with { type: "json" };
+
 export const modelsConfig = [
     {
-      name: "category",
+      name: "posts",
       slug: "name",
-      modelName: "Category",
+      modelName: "posts",
       schemaFields: {
         name: "String",
         description: "String",
@@ -12,13 +15,14 @@ export const modelsConfig = [
       options: {
         searchFields: ["slug", "name", "description"],
       },
-      relationCacheTags: ["subCategories", "products"],
+      relationCacheTags: ["projects"],
       useCrudHandler: true,
+      schema: post_schema
     },
     {
-      name: "product",
+      name: "project",
       slug: "name",
-      modelName: "Product",
+      modelName: "project",
       schemaFields: {
         name: "String",
         price: "Number",
@@ -28,8 +32,9 @@ export const modelsConfig = [
       options: {
         searchFields: ["slug", "name", "description"],
       },
-      relationCacheTags: ["category", "orders"],
+      relationCacheTags: ["posts"],
       useCrudHandler: true,
+      schema: project_schema
     },
   ];
   

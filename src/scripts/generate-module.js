@@ -55,7 +55,7 @@ import(modelsConfigPath)
       // ✅ generate Route
       generateRouteFile(routePath, name);
       // ✅ generate Validation
-      generateValidationFile(validationPath);
+      generateValidationFile(validationPath, name, config.schema);
       // ✅ Update index.routes.js
       updateIndexRoutes(modulesPath, name, name);
 
