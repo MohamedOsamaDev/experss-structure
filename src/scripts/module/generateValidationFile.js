@@ -12,7 +12,7 @@ export const generateValidationFile = (validationPath, schemaName, schema) => {
     // Import dependencies
     let imports = `import Joi from "joi";
 import { CommonsVal, fileVal } from "../../modules/_commons/validation.js";
-import { joiArray, joiText, messagesHandlers } from "../../utils/JoiHandlers.js";\n`;
+import { joiArray, joiText } from "../../utils/JoiHandlers.js";\n`;
 
     // Function to parse each field into a Joi validation schema
     const parseField = (field) => {
@@ -28,19 +28,15 @@ import { joiArray, joiText, messagesHandlers } from "../../utils/JoiHandlers.js"
           required ? "required()" : "optional()"
         }`;
         return single
-          ? `${fileValSchema}.messages(messagesHandlers({ label: "${name}", type: "object" }))`
-          : `joiArray({ body: ${fileValSchema}.messages(messagesHandlers({ label: "${name}", type: "object" })), min: ${minValue}, max: ${max}, required: ${isRequired} })`;
+          ? `${fileValSchema}`
+          : `joiArray({ body: ${fileValSchema}, min: ${minValue}, max: ${max}, required: ${isRequired} })`;
       };
 
-      const boolean = () =>
-        `Joi.boolean().messages(messagesHandlers({ label: "${name}", type: "boolean" }))${
-          required ? ".required()" : ""
-        }`;
+      const boolean = () => `Joi.boolean()${required ? ".required()" : ""}`;
 
       const date = () => `joiText({ date: true, required: ${isRequired} })`;
 
-      const object = () =>
-        `Joi.object({ ...commonVal }).messages(messagesHandlers({ label: "${name}", type: "object" }))`;
+      const object = () => `Joi.object({ ...CommonsVal })`;
 
       const allTypes = {
         text,
