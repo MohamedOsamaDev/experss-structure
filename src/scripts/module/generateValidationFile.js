@@ -48,7 +48,7 @@ export const generateValidationFile = (validationPath, schemaName, schema) => {
         return `Joi.object({
           ${fields.map((f) => `${f.name}: ${parseField(f, true)}`).join(",\n")}
             ...CommonsVal,
-        })${required ? ".required()" : ".optional()"}`;
+        })${isRequired}`;
       };
 
       const relation = () => {
@@ -60,7 +60,10 @@ export const generateValidationFile = (validationPath, schemaName, schema) => {
         const importStatement = `import { ${relationSchema} } from "../../modules/${refKey}/${refKey}.validation.js";`;
         imports.add(importStatement);
 
-        return single ? `${relationSchema}().min(1)${isRequired},` : `Joi.array().items(${relationSchema}().min(1))${isRequired},`};
+        return single
+          ? `${relationSchema}().min(1)${isRequired},`
+          : `Joi.array().items(${relationSchema}().min(1))${isRequired},`;
+      };
 
       const allTypes = {
         text,
