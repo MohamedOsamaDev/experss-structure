@@ -47,20 +47,20 @@
                     "label": "description"
                 },
                 {
-                    "name": "posts",
+                    "name": "projects",
                     "type": "relation",
-                    "ref": "posts",
+                    "ref": "projects",
                     "select": [
                         "_id",
                         "poster",
                         "title"
                     ],
-                    "imageField": "poster",
+                    "imageField": "projects",
                     "displayField": "title",
                     "required": true,
                     "single": true,
                     "max": 8,
-                    "label": "posts"
+                    "label": "projects"
                 }
             ]
         }
