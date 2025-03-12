@@ -1,5 +1,5 @@
-import project_schema from "./collections/project.schema.json" with { type: "json" };
-import post_schema from "./collections/post.schema.json" with { type: "json" };
+import project_schema from "./modules/collections/project.schema.json" with { type: "json" };
+import post_schema from "./modules/collections/post.schema.json" with { type: "json" };
 
 export const modelsConfig = [
     {

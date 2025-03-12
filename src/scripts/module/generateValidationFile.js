@@ -24,17 +24,20 @@ import { joiArray, joiText, messagesHandlers } from "../../utils/JoiHandlers.js"
         `joiText({ min: ${minValue}, max: ${max}, required: ${isRequired} })`;
 
       const media = () => {
-        const fileValSchema = `fileVal.${required ? "required()" : "optional()"}`;
+        const fileValSchema = `fileVal.${
+          required ? "required()" : "optional()"
+        }`;
         return single
           ? `${fileValSchema}.messages(messagesHandlers({ label: "${name}", type: "object" }))`
           : `joiArray({ body: ${fileValSchema}.messages(messagesHandlers({ label: "${name}", type: "object" })), min: ${minValue}, max: ${max}, required: ${isRequired} })`;
       };
 
       const boolean = () =>
-        `Joi.boolean().messages(messagesHandlers({ label: "${name}", type: "boolean" }))${required ? ".required()" : ""}`;
+        `Joi.boolean().messages(messagesHandlers({ label: "${name}", type: "boolean" }))${
+          required ? ".required()" : ""
+        }`;
 
-      const date = () =>
-        `joiText({ date: true, required: ${isRequired} })`;
+      const date = () => `joiText({ date: true, required: ${isRequired} })`;
 
       const object = () =>
         `Joi.object({ ...commonVal }).messages(messagesHandlers({ label: "${name}", type: "object" }))`;
@@ -64,13 +67,18 @@ export const ${schemaName}Validation = (locale = "en") => Joi.object({
 });
 `;
 
-    const fileName = `${schemaName}.validation.js`;
-    const outputPath = path.join(validationPath, fileName);
-    fs.writeFileSync(outputPath, result);
-    console.log(`✅ Validation file ${fileName} created successfully!`);
-    return fileName;
+    // Generate validation file content
+    const fileContent = `// Validation for ${schemaName}\n\nimport Joi from "joi";\n\n`;
+    // ✅ Use `fileContent` instead of `content`
+    fs.writeFileSync(validationPath, fileContent);
+
+    fs.writeFileSync(validationPath, content);
+    console.log(`✅ Validation file ${schemaName} created successfully!`);
   } catch (error) {
-    console.error(`❌ Error while creating ${schemaName}.validation.js file:`, error);
+    console.error(
+      `❌ Error while creating ${schemaName}.validation.js file:`,
+      error
+    );
     return null;
   }
 };
