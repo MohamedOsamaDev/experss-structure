@@ -1,1 +1,222 @@
-{"fields":[{"type":"dynamicZone","key":"metadata"},{"name":"heroSection","type":"object","label":"heroSection","fields":[{"name":"title","type":"text","label":"title"},{"name":"description","type":"textarea","label":"description"}]},{"name":"globeSection","type":"object","label":"globeSection","fields":[{"name":"title","type":"text","label":"title"},{"name":"poster","type":"media","allowedTypes":["image"],"single":true,"label":"poster"},{"name":"boxes","type":"array","label":"boxes","max":10,"fields":[{"name":"title","type":"text","label":"title"},{"name":"description","type":"textarea","label":"description"}]}]},{"name":"whyUsSection","type":"object","label":"whyUsSection","fields":[{"name":"title","type":"text","label":"title"},{"name":"description","type":"textarea","label":"description"},{"name":"boxes","type":"array","label":"boxes","max":10,"fields":[{"name":"title","type":"text","label":"title"},{"name":"points","type":"textarea","label":"points"}]},{"name":"sections","type":"array","label":"sections","max":10,"fields":[{"name":"title","type":"text","label":"title"},{"name":"description","label":"description","type":"textarea","fullSize":true},{"name":"media","type":"media","allowedTypes":["image","video"],"single":true,"label":"media"}]}]},{"name":"worksSection","type":"object","label":"worksSection","fields":[{"name":"title","type":"text","label":"title"},{"name":"description","type":"textarea","label":"description"},{"name":"projects","type":"relation","ref":"projects","select":["_id","poster","title"],"imageField":"poster","displayField":"title","single":false,"max":8,"label":"projects"}]},{"name":"contactUsSection","type":"object","label":"contactUsSection","fields":[{"name":"title","type":"text","label":"title"}]},{"name":"blogSection","type":"object","label":"blogSection","fields":[{"name":"title","type":"text","label":"title"},{"name":"description","type":"textarea","label":"description"},{"name":"posts","type":"relation","ref":"posts","select":["_id","poster","title"],"imageField":"poster","displayField":"title","required":true,"single":true,"max":8,"label":"posts"}]}],"options":{"translation":false,"roles":{"view":true,"create":false,"update":true,"delete":false,"filter":true,"sort":true,"search":true,"table":false},"cache":{"duration":"10m","tags":[]}}}
+{
+    "fields": [
+        {
+            "type": "dynamicZone",
+            "key": "metadata"
+        },
+        {
+            "name": "heroSection",
+            "type": "object",
+            "label": "heroSection",
+            "fields": [
+                {
+                    "name": "title",
+                    "type": "text",
+                    "label": "title"
+                },
+                {
+                    "name": "description",
+                    "type": "textarea",
+                    "label": "description"
+                }
+            ]
+        },
+        {
+            "name": "globeSection",
+            "type": "object",
+            "label": "globeSection",
+            "fields": [
+                {
+                    "name": "title",
+                    "type": "text",
+                    "label": "title"
+                },
+                {
+                    "name": "poster",
+                    "type": "media",
+                    "allowedTypes": [
+                        "image"
+                    ],
+                    "single": true,
+                    "label": "poster"
+                },
+                {
+                    "name": "boxes",
+                    "type": "array",
+                    "label": "boxes",
+                    "max": 10,
+                    "fields": [
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "title"
+                        },
+                        {
+                            "name": "description",
+                            "type": "textarea",
+                            "label": "description"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "whyUsSection",
+            "type": "object",
+            "label": "whyUsSection",
+            "fields": [
+                {
+                    "name": "title",
+                    "type": "text",
+                    "label": "title"
+                },
+                {
+                    "name": "description",
+                    "type": "textarea",
+                    "label": "description"
+                },
+                {
+                    "name": "boxes",
+                    "type": "array",
+                    "label": "boxes",
+                    "max": 10,
+                    "fields": [
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "title"
+                        },
+                        {
+                            "name": "points",
+                            "type": "textarea",
+                            "label": "points"
+                        }
+                    ]
+                },
+                {
+                    "name": "sections",
+                    "type": "array",
+                    "label": "sections",
+                    "max": 10,
+                    "fields": [
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "title"
+                        },
+                        {
+                            "name": "description",
+                            "label": "description",
+                            "type": "textarea",
+                            "fullSize": true
+                        },
+                        {
+                            "name": "media",
+                            "type": "media",
+                            "allowedTypes": [
+                                "image",
+                                "video"
+                            ],
+                            "single": true,
+                            "label": "media"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "worksSection",
+            "type": "object",
+            "label": "worksSection",
+            "fields": [
+                {
+                    "name": "title",
+                    "type": "text",
+                    "label": "title"
+                },
+                {
+                    "name": "description",
+                    "type": "textarea",
+                    "label": "description"
+                },
+                {
+                    "name": "projects",
+                    "type": "relation",
+                    "ref": "projects",
+                    "select": [
+                        "_id",
+                        "poster",
+                        "title"
+                    ],
+                    "imageField": "poster",
+                    "displayField": "title",
+                    "single": false,
+                    "max": 8,
+                    "label": "projects"
+                }
+            ]
+        },
+        {
+            "name": "contactUsSection",
+            "type": "object",
+            "label": "contactUsSection",
+            "fields": [
+                {
+                    "name": "title",
+                    "type": "text",
+                    "label": "title"
+                }
+            ]
+        },
+        {
+            "name": "blogSection",
+            "type": "object",
+            "label": "blogSection",
+            "fields": [
+                {
+                    "name": "title",
+                    "type": "text",
+                    "label": "title"
+                },
+                {
+                    "name": "description",
+                    "type": "textarea",
+                    "label": "description"
+                },
+                {
+                    "name": "posts",
+                    "type": "relation",
+                    "ref": "posts",
+                    "select": [
+                        "_id",
+                        "poster",
+                        "title"
+                    ],
+                    "imageField": "poster",
+                    "displayField": "title",
+                    "required": true,
+                    "single": true,
+                    "max": 8,
+                    "label": "posts"
+                }
+            ]
+        }
+    ],
+    "options": {
+        "translation": false,
+        "roles": {
+            "view": true,
+            "create": false,
+            "update": true,
+            "delete": false,
+            "filter": true,
+            "sort": true,
+            "search": true,
+            "table": false
+        },
+        "cache": {
+            "duration": "10m",
+            "tags": []
+        }
+    }
+}

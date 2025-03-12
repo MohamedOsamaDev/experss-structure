@@ -30,6 +30,39 @@
             ],
             "single": true,
             "label": "poster"
+        },
+        {
+            "name": "blogSection",
+            "type": "object",
+            "label": "blogSection",
+            "fields": [
+                {
+                    "name": "title",
+                    "type": "text",
+                    "label": "title"
+                },
+                {
+                    "name": "description",
+                    "type": "textarea",
+                    "label": "description"
+                },
+                {
+                    "name": "posts",
+                    "type": "relation",
+                    "ref": "posts",
+                    "select": [
+                        "_id",
+                        "poster",
+                        "title"
+                    ],
+                    "imageField": "poster",
+                    "displayField": "title",
+                    "required": true,
+                    "single": true,
+                    "max": 8,
+                    "label": "posts"
+                }
+            ]
         }
     ],
     "options": {
