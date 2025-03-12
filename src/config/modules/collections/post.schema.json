@@ -58,7 +58,7 @@
                     "imageField": "projects",
                     "displayField": "title",
                     "required": true,
-                    "single": true,
+                    "single": false,
                     "max": 8,
                     "label": "projects"
                 }
