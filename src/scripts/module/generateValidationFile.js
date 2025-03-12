@@ -18,10 +18,19 @@ export const generateValidationFile = (validationPath, schemaName, schema) => {
 
     // Function to parse each field into a Joi validation schema
     const parseField = (field, required = false) => {
-      const { name, type = "text", min = 2, max = 2000, single, ref, fields } = field;
+      const {
+        name,
+        type = "text",
+        min = 2,
+        max = 2000,
+        single,
+        ref,
+        fields,
+      } = field;
       const isRequired = required ? `.required()` : "";
 
-      const text = () => `joiText({ min: ${min}, max: ${max}, required: ${required} })`;
+      const text = () =>
+        `joiText({ min: ${min}, max: ${max}, required: ${required} })`;
 
       const media = () => {
         const fileValSchema = `fileVal${isRequired}`;
@@ -38,6 +47,7 @@ export const generateValidationFile = (validationPath, schemaName, schema) => {
         if (!fields) return "Joi.object().optional()";
         return `Joi.object({
           ${fields.map((f) => `${f.name}: ${parseField(f, true)}`).join(",\n")}
+            ...CommonsVal,
         })${required ? ".required()" : ".optional()"}`;
       };
 
@@ -55,7 +65,15 @@ export const generateValidationFile = (validationPath, schemaName, schema) => {
           : `Joi.array().items(${relationSchema}().min(1))${isRequired}`;
       };
 
-      const allTypes = { text, textarea: text, date, boolean, media, object, relation };
+      const allTypes = {
+        text,
+        textarea: text,
+        date,
+        boolean,
+        media,
+        object,
+        relation,
+      };
       return allTypes[type] ? allTypes[type]() : null;
     };
 
