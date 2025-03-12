@@ -16,12 +16,11 @@ import { joiArray, joiText } from "../../utils/JoiHandlers.js";\n`;
 
     // Function to parse each field into a Joi validation schema
     const parseField = (field, required = false) => {
-      const { name, type, min, max, single } = field;
-      const minValue = min || undefined;
+      const { name, type = "text" , min = 2, max = 2000, single } = field;
       const isRequired = required ? `true` : `false`;
 
       const text = () =>
-        `joiText({ min: ${minValue}, max: ${max}, required: ${isRequired} })`;
+        `joiText({ min: ${min}, max: ${max}, required: ${isRequired} })`;
 
       const media = () => {
         const fileValSchema = `fileVal.${
@@ -29,7 +28,7 @@ import { joiArray, joiText } from "../../utils/JoiHandlers.js";\n`;
         }`;
         return single
           ? `${fileValSchema}`
-          : `joiArray({ body: ${fileValSchema}, min: ${minValue}, max: ${max}, required: ${isRequired} })`;
+          : `joiArray({ body: ${fileValSchema}, min: ${min}, max: ${max}, required: ${isRequired} })`;
       };
 
       const boolean = () => `Joi.boolean()${required ? ".required()" : ""}`;
