@@ -44,7 +44,7 @@ export const generateValidationFile = (validationPath, schemaName, schema) => {
       const relation = () => {
         if (!ref) return null;
         const refKey = pluralize.singular(ref);
-        const relationSchema = `${refKey}Validation`;
+        const relationSchema = `${refKey}ValidationUpdate`;
 
         // Prevent duplicate imports
         const importStatement = `import { ${relationSchema} } from "../../modules/${refKey}/${refKey}.validation.js";`;
@@ -74,19 +74,19 @@ export const generateValidationFile = (validationPath, schemaName, schema) => {
 
     const result = `${Array.from(imports).join("\n")}
 
-export const create${schemaName}Validation = () => Joi.object({
+export const ${schemaName}ValidationCreate = () => Joi.object({
   ${createBody}
   ...CommonsVal,
 });
 
-export const update${schemaName}Validation = () => Joi.object({
+export const ${schemaName}ValidationUpdate = () => Joi.object({
   ${updateBody}
   ...CommonsVal,
 });
 
-export const delete${schemaName}Validation = ${idValidation};
+export const ${schemaName}ValidationDelete = ${idValidation};
 
-export const getOne${schemaName}Validation = ${idValidation};
+export const ${schemaName}ValidationGetOne = ${idValidation};
 `;
 
     // Generate validation file content
