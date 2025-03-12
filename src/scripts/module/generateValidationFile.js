@@ -11,7 +11,7 @@ export const generateValidationFile = (validationPath, schemaName, schema) => {
   try {
     // Import dependencies
     let imports = `import Joi from "joi";
-import { commonVal, fileVal } from "../../modules/_commons/validation.js";
+import { CommonsVal, fileVal } from "../../modules/_commons/validation.js";
 import { joiArray, joiText, messagesHandlers } from "../../utils/JoiHandlers.js";\n`;
 
     // Function to parse each field into a Joi validation schema
@@ -63,16 +63,12 @@ import { joiArray, joiText, messagesHandlers } from "../../utils/JoiHandlers.js"
     const result = `${imports}
 export const ${schemaName}Validation = (locale = "en") => Joi.object({
   ${bodyContent}
-  ...commonVal,
+  ...CommonsVal,
 });
 `;
 
     // Generate validation file content
-    const fileContent = `// Validation for ${schemaName}\n\nimport Joi from "joi";\n\n`;
-    // ✅ Use `fileContent` instead of `content`
-    fs.writeFileSync(validationPath, fileContent);
-
-    fs.writeFileSync(validationPath, content);
+    fs.writeFileSync(validationPath, result);
     console.log(`✅ Validation file ${schemaName} created successfully!`);
   } catch (error) {
     console.error(
