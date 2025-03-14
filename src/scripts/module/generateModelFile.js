@@ -5,7 +5,8 @@ import pluralize from "pluralize";
 /**
  * Generates a Mongoose model file based on a schema definition.
  * @param {string} modelPath - Path to save the model file.
- * @param {Object} schema - Schema definition containing fields and options.
+ * @param {string} name - Model name.
+ * @param {Object} schema - Schema definition containing fields.
  */
 export const generateModelFile = (modelPath, name, schema) => {
   try {
@@ -13,7 +14,7 @@ export const generateModelFile = (modelPath, name, schema) => {
 
     let imports = new Set([
       `import { Schema, model, models } from "mongoose";`,
-      `import { mongtext, schemaCommens, media, mongeDescription } from "../Commons.js";`,
+      `import { mongtext, schemaCommens, media, populateCommons, pageMetadataPopulate } from "../Commons.js";`,
     ]);
 
     // Function to parse each field into a Mongoose schema definition
@@ -25,7 +26,7 @@ export const generateModelFile = (modelPath, name, schema) => {
         textarea: "mongeDescription",
         boolean: `{ type: Boolean, default: false }`,
         date: `{ type: Date }`,
-        poster: single ? "media" : "[media]",
+        media: single ? "media" : "[media]",
       };
 
       return `${name}: ${types[type] || `{ type: String }`}`;
@@ -33,31 +34,31 @@ export const generateModelFile = (modelPath, name, schema) => {
 
     const schemaDefinition = fields.map(parseField).join(",\n  ");
 
-   // Collect all media fields dynamically
-   const mediaFields = fields
-   .filter((field) => field.type === "media")
-   .map((field) => `    { path: "${field.name}", ...populateCommons }`)
-   .join(",\n");
+    // Collect all media fields dynamically
+    const mediaFields = fields
+      .filter((field) => field.type === "media")
+      .map((field) => `    { path: "${field.name}", ...populateCommons }`)
+      .join(",\n");
 
- // Construct final model file content
- const content = `${Array.from(imports).join("\n")}
+    // Construct final model file content
+    const content = `${Array.from(imports).join("\n")}
 
 const ${name}Schema = new Schema({
-slug: mongtext,
-${schemaDefinition},
-...schemaCommens
+  slug: mongtext,
+  ${schemaDefinition},
+  ...schemaCommens
 }, {
-timestamps: true
+  timestamps: true
 });
 
 ${mediaFields ? `
 ${name}Schema.pre(/^find/, function (next) {
-const populatePipeline = [
- pageMetadataPopulate,
+  const populatePipeline = [
+    pageMetadataPopulate,
 ${mediaFields}
-];
-this.populate(populatePipeline);
-next();
+  ];
+  this.populate(populatePipeline);
+  next();
 });
 ` : ""}
 

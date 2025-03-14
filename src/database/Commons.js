@@ -2,9 +2,9 @@ import mongoose, { Schema } from "mongoose";
 
 export const ObjectId = mongoose.Schema.Types.ObjectId;
 export const publish = { type: Boolean, default: false, default: false };
-export const poster = { type: ObjectId, ref: "file" };
+export const media = { type: ObjectId, ref: "file" };
 export const mainCard = {
-  poster,
+  media,
   title: String,
   description: String,
 };
@@ -47,7 +47,7 @@ export const pageMetadata = new Schema({
   title: String,
   description: String,
   keywords: [String],
-  images: [poster],
+  images: [media],
 });
 export const pageMetadataPopulate = {
   path: "pageMetadata.images",
