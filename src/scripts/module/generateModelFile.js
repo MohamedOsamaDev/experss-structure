@@ -14,7 +14,7 @@ export const generateModelFile = (modelPath, name, schema) => {
 
     let imports = new Set([
       `import { Schema, model, models } from "mongoose";`,
-      `import { mongtext, schemaCommens, media, populateCommons, pageMetadataPopulate } from "../Commons.js";`,
+      `import { mongtext, mongeDescription, schemaCommens, media, populateCommons, pageMetadataPopulate } from "../Commons.js";`,
     ]);
 
     // Function to parse each field into a Mongoose schema definition
