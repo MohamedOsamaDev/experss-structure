@@ -19,7 +19,7 @@ export const generateModelFile = (modelPath, name, schema) => {
 
     // Function to parse each field into a Mongoose schema definition
     const parseField = (field) => {
-      const { name, type, single } = field;
+      const { name, type, single, required, options } = field;
 
       const types = {
         text: "mongtext",
@@ -27,6 +27,9 @@ export const generateModelFile = (modelPath, name, schema) => {
         boolean: `{ type: Boolean, default: false }`,
         date: `{ type: Date }`,
         media: single ? "media" : "[media]",
+        enum: `{ type: String, enum: ${JSON.stringify(
+          options.map((opt) => opt.value)
+        )}, ${required ? "required: true" : ""} }`,
       };
 
       return `${name}: ${types[type] || `{ type: String }`}`;
@@ -51,7 +54,9 @@ const ${name}Schema = new Schema({
   timestamps: true
 });
 
-${mediaFields ? `
+${
+  mediaFields
+    ? `
 ${name}Schema.pre(/^find/, function (next) {
   const populatePipeline = [
     pageMetadataPopulate,
@@ -60,7 +65,9 @@ ${mediaFields}
   this.populate(populatePipeline);
   next();
 });
-` : ""}
+`
+    : ""
+}
 
 export const ${name}Model = models.${name} || model("${name}", ${name}Schema);
 `;
