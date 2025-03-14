@@ -6,11 +6,6 @@ export const modelsConfig = [
       name: "posts",
       slug: "name",
       modelName: "posts",
-      schemaFields: {
-        name: "String",
-        description: "String",
-        poster: "String",
-      },
       pushToPipeline: null,
       options: {
         searchFields: ["slug", "name", "description"],
@@ -23,11 +18,6 @@ export const modelsConfig = [
       name: "project",
       slug: "name",
       modelName: "project",
-      schemaFields: {
-        name: "String",
-        price: "Number",
-        category: "mongoose.Schema.Types.ObjectId",
-      },
       pushToPipeline: null,
       options: {
         searchFields: ["slug", "name", "description"],
