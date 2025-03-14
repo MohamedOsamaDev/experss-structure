@@ -37,6 +37,12 @@ export const schemaCommens = {
   updatedBy: { type: ObjectId, ref: "user" },
 };
 
+export const populateCommons = {
+  model: "file",
+  options: { strictPopulate: false },
+  select: "_id url mimetype thumbnail", 
+};
+
 export const pageMetadata = new Schema({
   title: String,
   description: String,
